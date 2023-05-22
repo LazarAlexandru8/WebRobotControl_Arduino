@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            background-color: darkgray;
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #666;
+            padding: 30px;
+            text-align: center;
+            font-size: 25px;
+            color: whitesmoke;
+        }
+
+        p1 {
+            background-color: lightgrey;
+            position: relative;
+            width: 200px;
+            border: 15px darkgrey;
+            padding: 40px;
+            margin: 20px;
+        }
+
+        input {
+            background: white;
+            color: black;
+            transition: all 200ms ease;
+            border-left: 0 solid transparent;
+            height: 2rem;
+        }
+
+        .slider {
+
+            width: 300px;
+        }
+        div1{
+            position: absolute;
+            text-align: center;
+            margin-left:auto;
+            margin-right:auto;
+            top: 25%;
+            left: 35%;
+        }
+    </style>
+
+    <meta charset="UTF-8">
+    <title>Interfata</title>
+    <script src="redirect.js"></script>
+    <script src="datetime.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js'></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>Interfata control robot</h1>
+    </header>
+    <div1>
+        Servo #1<input type="checkbox" id="servo_gripper">
+        Servo #2<input type="checkbox" id="gripper">
+        Servo #3<input type="checkbox" id="LR">
+        Servo #4<input type="checkbox" id="UD">
+        Servo #5<input type="checkbox" id="UD2">
+        Servo #6<input type="checkbox" id="rotatie">
+        <br> <br>
+        <button onclick="checkCheckbox()">Selecteaza</button> <br>
+        <h1>Slider Gripper</h1>
+        <p>Position: <span id="servoPos"></span></p>
+        <input type="range" min="1" max="100" class="slider" id="servoSlider"/>
+    </div1>
+
+
+
+    <script>
+        var socket = io('localhost:3000');
+
+        function checkCheckbox() {
+            var servo1 = document.getElementById("servo_gripper");
+            var servo2 = document.getElementById("gripper");
+            var servo3 = document.getElementById("LR");
+            var servo4 = document.getElementById("UD");
+            var servo5 = document.getElementById("UD2");
+            var servo6 = document.getElementById("rotatie");
+
+
+            if (servo1.checked == true) {
+                socket.emit('select', {"Servo": "#1"});
+            }
+            else if (servo2.checked == true) {
+                socket.emit('select', {"Servo": "#2"});
+            }
+            else if (servo3.checked == true) {
+                socket.emit('select', {"Servo": "#3"});
+            }
+            else if (servo4.checked == true) {
+                socket.emit('select', {"Servo": "#4"});
+            }
+            else if (servo5.checked == true) {
+                socket.emit('select', {"Servo": "#5"});
+            }
+            else if (servo6.checked == true) {
+                socket.emit('select', {"Servo": "#6"});
+            }
+        }
+
+
+        var slider = document.getElementById("servoSlider");
+        var servoP = document.getElementById("servoPos");
+        servoP.innerHTML = slider.value;
+        slider.oninput = function() {
+            slider.value = this.value;
+            servoP.innerHTML = this.value;
+            let z = this.value.toString();
+            socket.emit('move', { "status_slider":z })}
+    </script>
+</body>
+</html>
